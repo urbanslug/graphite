@@ -1,0 +1,7 @@
+* Fasta
+** DONE Read fasta file
+** TODO Parse fasta files
+* Algorithms
+** TODO BWT
+* More
+** [[http://web.stanford.edu/class/cs166/handouts/100%20Suggested%20Final%20Project%20Topics.pdf][Topics in Advanced Data Structures]]
