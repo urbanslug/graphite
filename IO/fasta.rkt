@@ -10,10 +10,10 @@
       (next-line-it file))))
 
 
-;; TODO: Use racket cmdline
-(define (main)
+
+(define (read-fasta)
   (let* ([f (first (vector->list (current-command-line-arguments)))]
         [f* (open-input-file f)])
     (next-line-it f*)))
 
-(main)
+
