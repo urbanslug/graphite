@@ -1,13 +1,37 @@
 #lang racket
 
+
+(require racket/cmdline)
+
 (require "IO/graphviz.rkt")
 (require "algorithms/graph.rkt")
 
-;; TODO: Use racket cmdline
+(define output-file "graph.gv")
+
+(define (get-output-file filepath)
+  (set! output-file filepath))
+
+(define (input-file g)
+  (display g))
+
+(define (overall-menu)
+  (command-line
+   #:program "Graphite"
+   #:once-each
+   [("-o" "--output") filepath
+                      "Default is data/output/graph.gv"
+                      (get-output-file filepath)]
+   #:args (input-file)
+   input-file))
+
+(define (start)
+  (write-graphviz my-graph "data/output/" output-file))
+
+
 ;; TODO: Implement a menu
 (define (main)
-  (display "VG implementation in racket"))
+  (overall-menu)
+  (start))
 
-(let ([output-dir "data/output/"]
-      [gv-file "graph.gv"])
-  (write-graphviz my-graph output-dir gv-file))
+
+(main)
