@@ -8,12 +8,12 @@ raco pkg install graph
 
 # Running
 ```
-cd IO/
-racket graphviz.rkt
+# Output a graph.gv in dot format
+racket IO/graphviz.rkt
 
-# this will output a graph.gv in dot format
+# Visualize the graph - output an SVG
+cd data/output
 dot -Tsvg -o graph.svg graph.gv
-# There will be a graph in graph.svg
 ```
 
 
