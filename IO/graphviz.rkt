@@ -14,4 +14,5 @@
          [y (if (directory-exists? output-dir)
                 port
                 (mkdir-and-file))])
-    (graphviz g #:output y)))
+    (graphviz g #:output y)
+    (close-output-port y)))
