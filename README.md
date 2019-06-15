@@ -1,5 +1,7 @@
-# GSoC experiments
-Some experiments for GSoC 2019
+# Graphite
+
+A tool that uses implements a variant graph and other necessary functionality for [BioD](https://github.com/biod/biod)
+
 
 # Deps
 ```
