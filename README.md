@@ -3,19 +3,50 @@
 A tool that uses implements a variant graph and other necessary functionality for [BioD](https://github.com/biod/biod)
 
 
-# Deps
+
+## Dependencies
 ```
 raco pkg install graph
 ```
 
-# Running
+
+## Running
+
+### Compile a binary
+
 ```
-# Output a graph.gv in dot format
-racket vg.rkt
-By default outputs to data/output/graph.gv.
+raco exe graphite.rkt 
+```
 
+### Run graphite from source
 
-# Visualize the graph - output an SVG
+```
+racket graphite.rkt data/RSV/refererence_and_vcf_file/9465113.fa data/RSV/refererence_and_vcf_file/H_3801_22_04.freebayes.vcf 
+```
+
+By default graphite outputs graph in dot format to `data/output/graph.gv`.
+
+## Help
+
+```
+graphite -h
+```
+
+or if not compiled
+```
+racket graphite.rkt -h
+```
+
+## Visualization
+
+Use graphviz to view the graph as an SVG.  
+Graphite exports the graph in dot format into `data/output/graph.gv` but you can override this with the `-o` flag
+```
 cd data/output
+
 dot -Tsvg -o graph.svg graph.gv
 ```
+
+## Documentation
+
+To be found in the [docs directory](/docs).
