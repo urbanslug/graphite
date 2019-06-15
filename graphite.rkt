@@ -21,8 +21,8 @@
    [("-o" "--output") filepath
                       "Default is data/output/graph.gv"
                       (get-output-file filepath)]
-   #:args (input-file)
-   input-file))
+   #:args (reference-file vcf-file)
+   (cons reference-file vcf-file)))
 
 (define (start)
   (write-graphviz my-graph "data/output/" output-file))
