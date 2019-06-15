@@ -1,6 +1,6 @@
 #lang racket
 
-(provide read-fastas)
+(provide read-fastas fasta-hash)
 
 ;; In this context sequence means a base or amino acid sequence
 (define fasta-hash (make-hash))
