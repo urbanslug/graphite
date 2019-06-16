@@ -4,7 +4,7 @@
 (require graph)
 
 
-(provide my-graph)
+(provide my-graph gen-local-graph ref-s var1 var2 var3)
 
 (define example-sequence "ATCGGGGTTTCCCCAAAA")
 (define example-sequence-cont "GGGTTTTCCCCAAA")
@@ -15,7 +15,7 @@
 
 (define var1 (cons 4 "123"))
 (define var2 (cons 12 "456"))
-(define var2 (cons 18 "789"))
+(define var3 (cons 18 "789"))
 
 (define my-graph (unweighted-graph/directed
                   (list (list example-sequence variation)
@@ -45,18 +45,33 @@
 
 (define (gen-local-graph local-graph previous-position ref var)
   (if (empty? var)
-      local-graph
+      (append local-graph
+               (list (list (last (last local-graph)) ref))
+               (list (list (last (list-ref local-graph (- (length local-graph) 2))) ref)))
       (match-let* ([x (first var)]
                    [(cons pos change) x]
                    [new-pos (- pos previous-position)]
-                   [pre (substring ref 0 new-pos)])
+                   [current (string (string-ref ref new-pos))]
+                   [pre (substring ref 0 new-pos)]
+                   )
         (gen-local-graph
-         (list local-graph (list pre change))
+         (if (empty? local-graph)
+             (append local-graph
+               (list (list pre current))
+               (list (list pre change)))
+             (append local-graph
+               (list (list (last (last local-graph)) pre))
+               (list (list (last (list-ref local-graph (- (length local-graph) 2))) pre))
+               (list (list pre current))
+               (list (list pre change)))
+
+             )
+         
          pos
-         (substring ref new-pos)
+         (substring ref (+ 1 new-pos))
          (if (empty? var) (var) (rest var))))))
 
-;(gen-local-graph (list) 0 ref-s (list var1 var2))
+;(gen-local-graph (list) 0 ref-s (list var1 var2 var3))
 
 (define (insert-variation g variation)
   (match-let* ([(cons pos var) variation]

@@ -24,6 +24,7 @@
    #:args (reference-file vcf-file)
    (cons reference-file vcf-file)))
 
+
 (define (start)
   (write-graphviz my-graph "data/output/" output-file))
 
