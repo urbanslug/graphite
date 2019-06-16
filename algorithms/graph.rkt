@@ -10,14 +10,26 @@
 
 (define example-sequence "ATCGGGGTTTCCCCAAAA")
 (define example-sequence-cont "GGGTTTTCCCCAAA")
-(define variation "ATGTTTGGGAAA")
+;(define variation "ATGTTTGGGAAA")
 (define second-variation "TTGGAAATTGG")
 
 (define ref "ABCDEFGHIJKLMONOPQRSTUVWXYZ")
 
+;; (struct variation* (position id kmer) #:transparent)
+
+(struct variation (position kmer) #:transparent)
+
+(define (pair->variation p)
+  (variation (car p) (cdr p)))
+
+;;(define var1 (variation 4 #\X))
+;;(define var2 (variation 12  #\Y))
+;;(define var3 (variation 18 #\Z))
+
 (define var1 (cons 4 "123"))
 (define var2 (cons 12 "456"))
 (define var3 (cons 18 "789"))
+
 
 (define my-graph (unweighted-graph/directed
                   (list (list example-sequence variation)
@@ -45,17 +57,20 @@
 
 (define (gen-local-graph local-graph previous-position ref var)
   (if (empty? var)
+      ;; add the tail
       (append local-graph
                (list (list (last (last local-graph)) ref))
                (list (list (last (list-ref local-graph (- (length local-graph) 2))) ref)))
+      ;; add nodes
       (match-let* ([x (first var)]
                    [(cons pos changex) x]
-                   [change (string changex)]
+                   [change (variation pos (string changex))]
                    [new-pos (- pos previous-position)]
-                   [current (string (string-ref ref new-pos))]
-                   [pre (substring ref 0 new-pos)])
+                   [current  (variation pos (string (string-ref ref new-pos)))]
+                   [pre (variation pos (substring ref 0 new-pos))])
         (gen-local-graph
          (if (empty? local-graph)
+             ;; the tree is empty
              (append local-graph
                (list (list pre current))
                (list (list pre change)))

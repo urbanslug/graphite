@@ -40,7 +40,10 @@
     (next-line-it port)
     variation-hash))
 
+(struct variation (position kmer) #:transparent)
 
+(define (pair->variation p)
+  (variation (car p) (cdr p)))
 (define (gen-variation-list var-hash)
   (let ([hash-list (hash->list var-hash)])
     (sort hash-list (lambda (x y) (< (car x) (car y))))))
