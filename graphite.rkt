@@ -14,6 +14,7 @@
 (define (input-file g)
   (display g))
 
+
 (define (overall-menu)
   (command-line
    #:program "Graphite"
@@ -22,8 +23,7 @@
                       "Default is data/output/graph.gv"
                       (get-output-file filepath)]
    #:args (reference-file vcf-file)
-   (cons reference-file vcf-file)))
-
+   (gen-and-write-graph reference-file vcf-file)))
 
 (define (start)
   (write-graphviz my-graph "data/output/" output-file))

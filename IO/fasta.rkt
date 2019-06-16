@@ -25,6 +25,6 @@
       (next-line-it file))))
 
 (define (read-fastas filepath)
-  (let* ([port (open-input-file "../data/RSV/refererence_and_vcf_file/9465113.fa")])
+  (let* ([port (open-input-file filepath)])
     (next-line-it port)
     fasta-hash))

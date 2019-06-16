@@ -1,6 +1,6 @@
 #lang racket
 
-(provide read-vcf save-line)
+(provide read-vcf save-line variation-hash)
 
 ;; store reference file section
 ;; Get spec from https://samtools.github.io/hts-specs/VCFv4.2.pdf
@@ -36,7 +36,11 @@
       (next-line-it file))))
 
 (define (read-vcf filepath)
-  (let* ([port (open-input-file "../data/RSV/refererence_and_vcf_file/H_3801_22_04.freebayes.vcf")])
+  (let* ([port (open-input-file filepath)])
     (next-line-it port)
     variation-hash))
 
+
+(define (gen-variation-list var-hash)
+  (let ([hash-list (hash->list var-hash)])
+    (sort hash-list (lambda (x y) (< (car x) (car y))))))
