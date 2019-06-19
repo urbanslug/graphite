@@ -25,14 +25,11 @@
    #:args (reference-file vcf-file)
    (gen-and-write-graph reference-file vcf-file)))
 
-(define (start)
-  (write-graphviz my-graph "data/output/" output-file))
 
 
 ;; TODO: Implement a menu
 (define (main)
-  (overall-menu)
-  (start))
+  (overall-menu))
 
 
 (main)
