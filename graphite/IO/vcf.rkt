@@ -1,6 +1,6 @@
 #lang racket
 
-(provide read-vcf)
+(provide read-vcf variation)
 
 ;; store reference file section
 ;; Get spec from https://samtools.github.io/hts-specs/VCFv4.2.pdf

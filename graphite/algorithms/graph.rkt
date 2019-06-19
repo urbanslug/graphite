@@ -11,16 +11,17 @@
 (define (gen-sequence-graph local-graph previous-position ref var)
   (if (empty? var)
       ;; add the tail
-      (append local-graph
-               (list (list (last (last local-graph)) ref))
-               (list (list (last (list-ref local-graph (- (length local-graph) 2))) ref)))
+      (let ([ref-var (variation (+ 2 previous-position) ref)])
+        (append local-graph
+                (list (list (last (last local-graph)) ref-var))
+                (list (list (last (list-ref local-graph (- (length local-graph) 2))) ref-var))))
       ;; add nodes
       (match-let* ([x (first var)]
                    [(cons pos changex) x]
                    [g (if (char? changex) (string changex) changex)]
-                   [change (variation pos g)]
+                   [change (variation (+ 1 pos) g)]
                    [new-pos (- pos previous-position)]
-                   [current  (variation pos (string (string-ref ref new-pos)))]
+                   [current  (variation (+ 1 pos) (string (string-ref ref new-pos)))]
                    [pre (variation pos (substring ref 0 new-pos))])
         (gen-sequence-graph
          (if (empty? local-graph)
@@ -64,6 +65,14 @@
         [ref (extract-ref-string ref-fp)])
     (gen-sequence-graph empty 0 ref var-list)))
 
+(define ref "ACTGAATTTGTA")
+(define var1 (cons 2 "GHGD"))
+(define var2 (cons 4 #\C))
+
+(define output-file "../data/output/test.gv")
+
+(gen-sequence-graph empty 0 ref (list var1 var2))
+
 
 (define (write-graph g)
   (let* ([port (open-output-file output-file #:exists 'replace)])
@@ -74,3 +83,4 @@
   (let* ([seq-list (gen-sequence-list reference variation)]
         [graph (unweighted-graph/directed seq-list)])
     (write-graph graph)))
+
