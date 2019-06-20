@@ -38,12 +38,6 @@
          (substring ref (+ 1 new-pos))
          (if (empty? var) (var) (rest var))))))
 
-(define (insert-variation g variation)
-    (match-let* ([(cons pos var) variation]
-                                 [pre (substring ref 0 pos)]
-                                 [post (substring ref pos)])
-           (unweighted-graph/directed
-                  (list (list )))))
 
 (define (extract-ref-string fp)
      (let* ([references (read-fastas fp)]
@@ -65,17 +59,10 @@
         [ref (extract-ref-string ref-fp)])
     (gen-sequence-graph empty 0 ref var-list)))
 
-(define ref "ACTGAATTTGTA")
-(define var1 (cons 2 "GHGD"))
-(define var2 (cons 4 #\C))
-
-(define output-file "../data/output/test.gv")
-
-(gen-sequence-graph empty 0 ref (list var1 var2))
 
 
-(define (write-graph g)
-  (let* ([port (open-output-file output-file #:exists 'replace)])
+(define (write-graph g output-file-path)
+  (let* ([port (open-output-file output-file-path #:exists 'replace)])
     (graphviz g #:output port)
     (close-output-port port)))
 

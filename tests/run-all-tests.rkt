@@ -1,5 +1,6 @@
 #lang racket
 
 
-(require rackunit)
-(require "../graphite/algorithms/graph.rkt")
+(require "algorithms/graph.rkt")
+
+(test-graph-generation)
