@@ -1,6 +1,6 @@
 #lang racket
 
 
-(require "algorithms/graph.rkt")
+(require "algorithms/test-graph.rkt")
 
 (test-graph-generation)

@@ -6,7 +6,7 @@
 (require "../IO/vcf.rkt")
 (require "../IO/fasta.rkt")
 
-(provide gen-sequence-graph gen-and-write-graph)
+(provide gen-sequence-graph gen-and-write-graph write-graph)
 
 (define (gen-sequence-graph local-graph previous-position ref var)
   (if (empty? var)
@@ -66,8 +66,8 @@
     (graphviz g #:output port)
     (close-output-port port)))
 
-(define (gen-and-write-graph reference variation)
+(define (gen-and-write-graph reference variation fp)
   (let* ([seq-list (gen-sequence-list reference variation)]
         [graph (unweighted-graph/directed seq-list)])
-    (write-graph graph)))
+    (write-graph graph fp)))
 
