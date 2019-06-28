@@ -44,8 +44,20 @@ before_install:
   - export PATH="${RACKET_DIR}/bin:${PATH}"
 
 install:
- - raco pkg install --deps search-auto -n graphite
+  - raco pkg install --deps search-auto -n graphite
 
 script:
- - raco test --package graphite
- - raco exe graphite/graphite.rkt
+  - raco test --package graphite
+  - raco exe graphite/graphite.rkt
+
+after_success:
+  - scribble --dest-name index.html --dest scribble-docs graphite/graphite.scrbl
+
+deploy:
+  provider: pages
+  local_dir: scribble-docs
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: true
+  on:
+    branch: master
