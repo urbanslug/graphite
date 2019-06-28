@@ -3,6 +3,7 @@
 (require "./utils.rkt")
 
 (provide sorted-bwm
+         extract-bwt
          bwt)
 
 
@@ -10,9 +11,9 @@
   (sort-bwm (gen-bwm s)))
 
 
-(define (bwm-string l)
+(define (extract-bwt sorted-bwm)
   (list->string
-   (map (lambda (s*) (string-ref s* (- (string-length s*) 1))) l)))
+   (map (lambda (s*) (string-ref s* (- (string-length s*) 1))) sorted-bwm)))
 
 ;; ignore spaces for now
 
@@ -20,4 +21,4 @@
 
 (define/contract (bwt s)
   (string? . -> . string?)
-  (bwm-string (sorted-bwm s)))
+  (extract-bwt (sorted-bwm s)))

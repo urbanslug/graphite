@@ -5,6 +5,7 @@
 (provide sa-string
          sa
          gen-ranks
+         extract-sa
          sort-ranked-bwm)
 
 ;; pass this the unsorted bwm
@@ -25,5 +26,8 @@
 (define (sa-string l)
   (list->string (map (lambda (s*) (string-ref s* 0) ) l)))
 
+(define (extract-sa ranked-bwm)
+  (map car ranked-bwm))
+
 (define (sa s)
-  (map car (sort-ranked-bwm (gen-ranks (gen-bwm s)))))
+  (extract-sa (sort-ranked-bwm (gen-ranks (gen-bwm s)))))
