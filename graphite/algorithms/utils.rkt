@@ -4,6 +4,7 @@
          rotate-string
          gen-sorted-bwm
          sort-bwm
+         extract-alphabet
          gen-bwm)
 
 
@@ -41,3 +42,26 @@
 
 (define (gen-sorted-bwm s)
   (sort-bwm (gen-bwm s)))
+
+
+;; Test membership
+(define (in? element l)
+  (if (member element l) #t #f))
+
+(define (id)
+  (lambda (x) x))
+
+
+;; get all the unique characters in a string
+(define (extract-alphabet s)
+  (let* ([l* (string->list s) ])
+    (foldr (lambda (char accum) (if (in? char accum)
+                                    accum
+                                    (append accum (list char))))
+           empty
+           l*)))
+
+;; list -> list
+(provide char-sort-ascending)
+(define (char-sort-ascending l)
+  (sort l char<=?))

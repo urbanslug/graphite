@@ -27,4 +27,12 @@
                 "abaaba$"
                 "ba$abaa"
                 "baaba$a"))
+(define s2 "aaasddsdsdqwqsdsderwfw")
 
+(check-equal? (#\z . in? . (string->list s2)) #f)
+
+(check-equal? (#\$ . in? . (string->list s2)) #t)
+
+
+(check-equal? (extract-alphabet "aaasddsdsdqwqsdsderwfwr$")
+              '(#\$ #\r #\w #\f #\e #\d #\s #\q #\a))
