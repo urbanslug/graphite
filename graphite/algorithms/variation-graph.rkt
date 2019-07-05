@@ -6,6 +6,8 @@
 ;;(require graph)
 
 
+(provide node empty-graph add-adjacent-node node*)
+
 ;; TODO: represent bases in binary
 (serializable-struct
  node*
@@ -14,19 +16,19 @@
 
 ;; sh256 hash as a hex hash
 (define (string->hash s)
-  (bytes->hex-string (sha256-bytes (string->bytes/utf-8 s))))
+  (bytes->hex-string (sha1-bytes (string->bytes/utf-8 s))))
 
 ;; adjacent-nodes is a set of edges out of the node
 
 ;; Should I replace UUID with a cryptographic hash of the sequence?
 ;; a negative offset means the offset for the node isn't yet determined
 ;; TODO: use bytestrings for the sequence
-(define (node seq [offset #f] [adj (set)])
+(define (node seq #:id [id #f] #:offset [offset #f] #:edges [adj (set)])
   (let* ([s (if offset
                (string-append seq "+" (number->string offset))
                seq)]
-        [id (string->hash s) ])
-    (node* seq id offset adj)))
+         [id* (if id id (string->hash s)) ])
+    (node* seq id* offset adj)))
 
 ;; doesn't mutate the node
 ;; not allowed to change node id
@@ -36,10 +38,10 @@
 ;; TODO: remove this fn or make sure it doesn't cause IDs to break
 (define (update-node n #:sequence [seq #f] #:offset [offset #f] #:edges [edges #f])
   (let ([s (or seq (node*-sequence n))]
-        [i (node*-id n) ]
+        [i (node*-id n)]
         [o (or offset  (node*-offset n))]
         [e (or edges (node*-edges n))])
-    (node s o e)))
+    (node s #:id i #:offset o #:edges e)))
 
 ;; The graph is a *dict* of nodes and links
 ;; a graph here is an empty variation graph
@@ -110,3 +112,44 @@
     g))
 
 
+
+;; Move to GFA
+
+(define reference
+  "ATTTCCGATAGATCGATATGCGATGCGATGCAGTAGC")
+
+(define n1 (node reference #:offset 3))
+(define n2 (node reference #:offset 5))
+(define n3 (node reference #:offset 10))
+
+;; n -> n2
+(define g1 (add-adjacent-node empty-graph n1 n2))
+
+;; n -> n2 and n2->n3
+(define g2 (add-adjacent-node g1  n1 n3))
+;; n -> n2 n2 -> n3  n -> n3
+(define g3 (add-adjacent-node g2 n2  n3))
+
+(define gfa-header "H\tVN:Z:1.0")
+
+
+
+(define (node->gfa-node id n)
+
+  (let* ([seq (node*-sequence n)]
+        [edges (node*-edges n)]
+        [edges* (string-join (set-map edges (lambda (l) (string-append "\nL\t" id "\t+\t" l "\t+\t" "0M"))))])
+    (string-append "\nS\t" id "\t" seq edges*)))
+
+(define (vg->gfa-string g)
+  (string-append gfa-header
+                 (string-join (hash-map g  node->gfa-node))))
+
+
+(define (write-gfa s)
+  (let* ([output-path "/Users/urbanslug/src/racket/graphite/data/output/gfa/test.gfa"]
+         [port (open-output-file output-path #:exists 'replace)])
+    (fprintf port s)
+    (close-output-port port)))
+
+(write-gfa (vg->gfa-string g3))
