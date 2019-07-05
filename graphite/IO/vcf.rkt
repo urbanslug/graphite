@@ -1,14 +1,13 @@
 #lang racket
 
-(provide read-vcf variation)
+(provide read-vcf variation variation-position variation-kmer)
 
 ;; store reference file section
 ;; Get spec from https://samtools.github.io/hts-specs/VCFv4.2.pdf
 
-(define variation-file-path
-  "../data/RSV/refererence_and_vcf_file/H_3801_22_04.freebayes.vcf")
 
 ;; append to this global variations variable
+;; a list
 (define variations empty)
 
 ;; TODO: kmer shouldn't be one char/base but a list of all possibilities there

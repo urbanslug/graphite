@@ -5,7 +5,10 @@
          gen-sorted-bwm
          sort-bwm
          extract-alphabet
-         gen-bwm)
+         gen-bwm
+         sublist
+         sublist-inc
+         )
 
 
 ;; Burrows Wheeler Matrix (BWM)
@@ -65,3 +68,11 @@
 (provide char-sort-ascending)
 (define (char-sort-ascending l)
   (sort l char<=?))
+
+;; Exclusive
+(define (sublist l start stop)
+  (drop (take l stop) start))
+
+;; Inclusive
+(define (sublist-inc l start stop)
+  (drop (take l (+ 1 stop)) start))

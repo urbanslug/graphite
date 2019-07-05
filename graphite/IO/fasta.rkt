@@ -1,6 +1,6 @@
 #lang racket
 
-(provide read-fastas fasta-hash)
+(provide read-fasta-file fasta-hash)
 
 ;; In this context sequence means a base or amino acid sequence
 (define fasta-hash (make-hash))
@@ -24,7 +24,7 @@
       (parse-fasta-file line)
       (next-line-it file))))
 
-(define (read-fastas filepath)
+(define (read-fasta-file filepath)
   (let* ([port (open-input-file filepath)])
     (next-line-it port)
     fasta-hash))

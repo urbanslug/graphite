@@ -36,15 +36,6 @@
      empty
      s*)))
 
-;; Exclusive
-(define (sublist l start stop)
-  (drop (take l stop) start))
-
-;; Inclusive
-(define (sublist-inc l start stop)
-  (drop (take l (+ 1 stop)) start))
-
-
 ;; replace last element in list with value-blame
 ;; O(n)
 (define (replace-last l v)

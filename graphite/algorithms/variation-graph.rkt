@@ -4,7 +4,9 @@
 (require racket/serialize)
 (require file/sha1)
 ;;(require graph)
-
+(require "../IO/fasta.rkt")
+(require "../IO/vcf.rkt")
+(require "./utils.rkt")
 
 (provide node empty-graph add-adjacent-node node*)
 
@@ -115,23 +117,6 @@
 
 ;; Move to GFA
 
-(define reference
-  "ATTTCCGATAGATCGATATGCGATGCGATGCAGTAGC")
-
-(define n1 (node reference #:offset 3))
-(define n2 (node reference #:offset 5))
-(define n3 (node reference #:offset 10))
-
-;; n -> n2
-(define g1 (add-adjacent-node empty-graph n1 n2))
-
-;; n -> n2 and n2->n3
-(define g2 (add-adjacent-node g1  n1 n3))
-;; n -> n2 n2 -> n3  n -> n3
-(define g3 (add-adjacent-node g2 n2  n3))
-
-(define gfa-header "H\tVN:Z:1.0")
-
 
 
 (define (node->gfa-node id n)
@@ -142,8 +127,9 @@
     (string-append "\nS\t" id "\t" seq edges*)))
 
 (define (vg->gfa-string g)
-  (string-append gfa-header
-                 (string-join (hash-map g  node->gfa-node))))
+  (let ([gfa-header "H\tVN:Z:1.0"])
+    (string-append gfa-header
+                   (string-join (hash-map g  node->gfa-node)))))
 
 
 (define (write-gfa s)
@@ -152,4 +138,62 @@
     (fprintf port s)
     (close-output-port port)))
 
-(write-gfa (vg->gfa-string g3))
+;; (write-gfa (vg->gfa-string g3))
+
+
+(define reference
+  "ATTTCCGATAGATCGATATGCGATGCGATGCAGTAGC")
+
+
+(define queue empty)
+(define growth-nodes empty)
+
+(define (extract-fragment ref start stop)
+  (if stop
+      (sublist ref start stop)
+      (drop ref start)))
+
+(define (gen-directed-graph g l)
+  (foldr (lambda (node-list g*)
+           (add-adjacent-node g* (first node-list) (second node-list)))
+         g
+         l))
+
+;; Generate a graph from a reference and VCF
+;; list -> list -> hash map
+(define (gen-vg ref vcf [g empty-graph])
+  ;; VCF is expected to be small
+
+  (foldr
+   (lambda (variation* g*)
+     (let* ([pos      (variation-position variation*)]
+            [next-pos (+ pos 1)]
+            [prev-pos (- pos 1)]
+            [kmer* (variation-kmer variation*)]
+            [frag (extract-fragment ref pos (if (empty? queue) #f (last queue)))]
+            ;; fragment
+            [n1 (node (list->string frag) #:offset next-pos)]
+            ;; seq at point
+            [n2 (node (string (list-ref ref pos)) #:offset next-pos)]
+            ;; variation
+            [n3 (node kmer* #:offset next-pos)]
+
+            [g-nodes (if (empty? growth-nodes)
+                         empty
+                         (map (lambda (x) (list n1 x)) growth-nodes))]
+            [g1 (gen-directed-graph g* (append (list (list n2 n1) (list n3 n1)) g-nodes))])
+       (append queue (list frag))
+       (append growth-nodes (list n2 n3))
+       g1))
+   g
+   vcf))
+
+(define v1 (variation 10 "TGA"))
+(define v2 (variation 15 "ACA"))
+(define v3 (variation 30 "CCA"))
+(define variations (list v1 v2 v3))
+
+(define vg (gen-vg (string->list reference) variations))
+(write-gfa (vg->gfa-string vg))
+
+

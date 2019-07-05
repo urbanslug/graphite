@@ -22,3 +22,10 @@
 
 (write-graph g4)
 (read-graph)
+
+(define variation-file-path
+  "/Users/urbanslug/src/racket/graphite/data/RSV/refererence_and_vcf_file/H_3801_22_04.freebayes.vcf")
+(define reference-file-path
+  "/Users/urbanslug/src/racket/graphite/data/RSV/refererence_and_vcf_file/9465113.fa")
+
+(gen-vg (hash-ref (read-fasta-file reference-file-path) "9465113") (read-vcf variation-file-path))
