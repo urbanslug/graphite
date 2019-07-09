@@ -40,7 +40,7 @@
 
 
 (define (extract-ref-string fp)
-     (let* ([references (read-fastas fp)]
+     (let* ([references (read-fasta-file fp)]
                       [sequences  (hash-keys references)]
                       [seq (first sequences)])
             (hash-ref references seq)))
