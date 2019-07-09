@@ -141,8 +141,6 @@
 ;; (write-gfa (vg->gfa-string g3))
 
 
-(define reference
-  "ATTTCCGATAGATCGATATGCGATGCGATGCAGTAGC")
 
 
 (define queue empty)
@@ -153,47 +151,100 @@
       (sublist ref start stop)
       (drop ref start)))
 
+
+;; A list of node pairs and a graph and adds the nodes to the graph
 (define (gen-directed-graph g l)
-  (foldr (lambda (node-list g*)
-           (add-adjacent-node g* (first node-list) (second node-list)))
-         g
-         l))
+  (foldr
+   (lambda (node-pair g*)
+     (let* ([f (car node-pair)]
+           [s (cdr node-pair)]
+           [f* (if (hash-has-key? g* (node*-id f))
+                   (hash-ref g* (node*-id f))
+                   f
+                   )]
+
+           [s* (if (hash-has-key? g* (node*-id s))
+                   (hash-ref g* (node*-id s))
+                   s
+                   )]
+           )
+       (add-adjacent-node g* f* s*)))
+   g
+   l))
 
 ;; Generate a graph from a reference and VCF
 ;; list -> list -> hash map
-(define (gen-vg ref vcf [g empty-graph])
-  ;; VCF is expected to be small
+(define (gen-vg-uncapped ref vcf [g empty-graph])
 
   (foldr
-   (lambda (variation* g*)
-     (let* ([pos      (variation-position variation*)]
+   (lambda (variation* accum)
+     (let* ([g*             (hash-ref accum 'graph)]
+            [prev-split-pos (hash-ref accum 'prev-split-pos)]
+            [prev-nodes     (hash-ref accum 'prev-nodes)]
+
+            [kmer*    (variation-kmer variation*)]
+            [pos      (variation-position variation*)]
             [next-pos (+ pos 1)]
-            [prev-pos (- pos 1)]
-            [kmer* (variation-kmer variation*)]
-            [frag (extract-fragment ref pos (if (empty? queue) #f (last queue)))]
+
+            [fragment (extract-fragment ref pos (if prev-split-pos prev-split-pos #f))]
+
             ;; fragment
-            [n1 (node (list->string frag) #:offset next-pos)]
+            [n1 (node (list->string fragment) #:offset next-pos)]
             ;; seq at point
             [n2 (node (string (list-ref ref pos)) #:offset next-pos)]
             ;; variation
             [n3 (node kmer* #:offset next-pos)]
 
-            [g-nodes (if (empty? growth-nodes)
-                         empty
-                         (map (lambda (x) (list n1 x)) growth-nodes))]
-            [g1 (gen-directed-graph g* (append (list (list n2 n1) (list n3 n1)) g-nodes))])
-       (append queue (list frag))
-       (append growth-nodes (list n2 n3))
-       g1))
-   g
+            [x (if (empty? prev-nodes)
+                   empty
+                   (map (lambda (x) (cons n1 x)) prev-nodes))]
+
+            [nodes (append (list (cons n2 n1) (cons n3 n1)) x)]
+            [y (gen-directed-graph g* nodes)])
+
+       (hash
+        'graph y
+        'prev-nodes (list (hash-ref y (node*-id n2))
+                          (hash-ref y (node*-id n3)))
+        'prev-split-pos pos)))
+
+   (hash 'graph g
+         'prev-nodes empty
+         ;; where we last split the ref
+         'prev-split-pos #f)
    vcf))
+
+(define (gen-vg ref vcf [g empty-graph])
+  (let* ([uncapped (gen-vg-uncapped ref vcf g)]
+         [cap-frag (extract-fragment (string->list reference) 0 (variation-position (first vcf)))]
+         [cap-node (node (list->string  cap-frag) #:offset 0)])
+
+    (gen-directed-graph
+     (hash-ref uncapped 'graph)
+     (list (cons cap-node (first (hash-ref uncapped 'prev-nodes)))
+           (cons cap-node (second (hash-ref uncapped 'prev-nodes)))))))
+
+
+(define reference
+  "ATTTCCGATAGATCGATATGCGATGCGATGCAGTAGC")
 
 (define v1 (variation 10 "TGA"))
 (define v2 (variation 15 "ACA"))
 (define v3 (variation 30 "CCA"))
 (define variations (list v1 v2 v3))
 
+(define n1 (node reference #:offset 3))
+(define n2 (node reference #:offset 5))
+(define n3 (node reference #:offset 10))
+(define n4 (node reference #:offset 14))
+(define n5 (node reference #:offset 17))
+
+
+;(define vg (gen-directed-graph empty-graph (list (cons n1 n2) (cons n2 n3) (cons n1 n3) (cons n4 n1) (cons n5 n1))))
+
+
 (define vg (gen-vg (string->list reference) variations))
+
+;(define vg* (hash-ref vg 'graph))
+
 (write-gfa (vg->gfa-string vg))
-
-
