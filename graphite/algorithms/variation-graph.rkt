@@ -2,11 +2,11 @@
 
 (provide gen-vg)
 
+
 (require "./graph.rkt")
 (require "../structures/graph.rkt")
 (require "../IO/vcf.rkt")
 (require "./utils.rkt")
-
 
 ;; Generate a graph from a reference and VCF
 ;; list -> list -> hash map
@@ -50,8 +50,8 @@
    vcf))
 
 (define (gen-vg ref vcf [g empty-graph])
-  (let* ([uncapped (gen-vg-uncapped ref vcf g)]
-         [cap-frag (slice (string->list reference) 0 (variation-position (first vcf)))]
+  (let* ([uncapped (gen-vg-uncapped (string->list ref) vcf g)]
+         [cap-frag (slice (string->list ref) 0 (variation-position (first vcf)))]
          [cap-node (create-node (list->string  cap-frag) #:offset 0)])
 
     (gen-directed-graph

@@ -5,21 +5,21 @@
 (require "./vcf.rkt")
 (require "../structures/graph.rkt")
 
+(provide write-gfa
+         vg->gfa-string)
 
 (define (node->gfa-node id n)
-  (let* ([seq (node-segment n)]
-        [edges (node-edges n)]
-        [edges* (string-join
-                 (set-map edges
-                          (lambda (l) (string-append "\nL\t" id "\t+\t" l "\t+\t" "0M"))))])
+  (let* ([seq         (node-segment n)]
+         [edges       (node-edges n)]
+         [format-edge (lambda (l) (format "\nL\t~a\t+\t~a\t+\t0M" id l))]
+         [edges*      (string-join (set-map edges format-edge))])
     (string-append "\nS\t" id "\t" seq edges*)))
 
 (define (vg->gfa-string g)
   (let ([gfa-header "H\tVN:Z:1.0"])
     (string-append
      gfa-header
-     (string-join (hash-map g  node->gfa-node)))))
-
+     (string-join (hash-map g node->gfa-node)))))
 
 (define (write-gfa s)
   (let* ([output-path "/Users/urbanslug/src/racket/graphite/data/output/gfa/test.gfa"]

@@ -1,5 +1,7 @@
 #lang racket
 
+(require racket/serialize)
+
 ;; TODO: move to IO
 ;; serialization
 (define (write-graph g)

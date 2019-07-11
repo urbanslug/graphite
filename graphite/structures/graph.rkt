@@ -33,5 +33,4 @@
                           (set-map edge-set map-edges))])
       (fprintf port "~a ~a ~a ~a" short-id seg offset* edges*)))])
 
-
 (define empty-graph (make-immutable-hash))

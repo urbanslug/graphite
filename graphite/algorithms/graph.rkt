@@ -4,14 +4,12 @@
 (require racket/serialize)
 (require file/sha1)
 (require "./utils.rkt")
-
 (require "../structures/graph.rkt")
 
 (provide create-node
          update-node
          get-long-id
-         gen-directed-graph
-         )
+         gen-directed-graph)
 
 ;; sh256 hash as a hex hash
 (define (string->hash s)
