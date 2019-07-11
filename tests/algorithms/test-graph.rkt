@@ -21,3 +21,12 @@
   (let* ([x (gen-sequence-graph empty 0 ref (list var1 var2))]
         [g (unweighted-graph/directed x)])
     (write-graph g output-file)))
+
+;; Crap
+(define x (create-node "ABISD" #:offset 12))
+(define y (create-node "ABOPD" #:offset 13))
+(define z (create-node "OPYUD" #:offset 15))
+
+(define dag  (gen-directed-graph empty-graph (list (cons x y) (cons y z))))
+
+(print-graph dag)

@@ -29,3 +29,22 @@
   "/Users/urbanslug/src/racket/graphite/data/RSV/refererence_and_vcf_file/9465113.fa")
 
 (gen-vg (hash-ref (read-fasta-file reference-file-path) "9465113") (read-vcf variation-file-path))
+
+
+
+;; Crap
+(define reference
+  "ATTTCCGATAGATCGATATGCGATGCGATGCAGTAGC")
+
+(define v1 (variation 10 "TGA"))
+(define v2 (variation 15 "ACA"))
+(define v3 (variation 30 "CCA"))
+(define variations (list v1 v2 v3))
+
+(define n1 (create-node reference #:offset 3))
+(define n2 (create-node reference #:offset 5))
+(define n3 (create-node reference #:offset 10))
+(define n4 (create-node reference #:offset 14))
+(define n5 (create-node reference #:offset 17))
+
+

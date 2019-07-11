@@ -8,6 +8,8 @@
          gen-bwm
          sublist
          sublist-inc
+         shorten-hash
+         slice
          )
 
 
@@ -73,6 +75,18 @@
 (define (sublist l start stop)
   (drop (take l stop) start))
 
+(define (slice l start stop)
+  (if stop
+      (drop (take l stop) start)
+      (drop l start)
+      )
+  )
+
+
 ;; Inclusive
 (define (sublist-inc l start stop)
   (drop (take l (+ 1 stop)) start))
+
+;; extract the first 7 chars of a hash
+(define (shorten-hash s)
+  (substring s 0 7))
