@@ -18,7 +18,7 @@
       s
       (substring s 0 20)))
 
-;; TODO: add info on stable seq
+;; TODO: add info on stable sequence
 (serializable-struct
  node (segment id offset edges)
  #:methods gen:custom-write

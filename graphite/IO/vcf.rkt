@@ -1,23 +1,15 @@
 #lang racket
 
-(provide read-vcf variation variation-position variation-kmer)
+(provide read-vcf)
+
+(require "../structures/variations.rkt")
 
 ;; store reference file section
 ;; Get spec from https://samtools.github.io/hts-specs/VCFv4.2.pdf
 
-
 ;; append to this global variations variable
 ;; a list
 (define variations empty)
-
-;; TODO: kmer shouldn't be one char/base but a list of all possibilities there
-(struct variation (position kmer)
-  #:methods gen:custom-write
-  [(define (write-proc variation port mode)
-     (let* ([f (number->string (variation-position variation))]
-           [s (variation-kmer variation)]
-           [p (if (char? s) (string s) s)])
-       (fprintf port (string-append f ": " p))))])
 
 (define (save-line line)
   (let* ([position-pair (regexp-match-positions #px"[ATCG]\\s" line)]

@@ -4,9 +4,10 @@
 
 
 (require "./graph.rkt")
-(require "../structures/graph.rkt")
-(require "../IO/vcf.rkt")
 (require "./utils.rkt")
+(require "../structures/graph.rkt")
+(require "../structures/variations.rkt")
+
 
 ;; Generate a graph from a reference and VCF
 ;; list -> list -> hash map
