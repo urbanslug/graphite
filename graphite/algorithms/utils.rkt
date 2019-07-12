@@ -75,12 +75,10 @@
 (define (sublist l start stop)
   (drop (take l stop) start))
 
-(define (slice l start stop)
+(define (slice l start [stop #f])
   (if stop
       (drop (take l stop) start)
-      (drop l start)
-      )
-  )
+      (drop l start)))
 
 
 ;; Inclusive
