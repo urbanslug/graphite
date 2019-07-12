@@ -13,4 +13,4 @@
      (let* ([f (number->string (variation-position variation))]
             [s (variation-kmer variation)]
             [p (if (char? s) (string s) s)])
-       (fprintf port "~a: ~a" f p)))])
+       (fprintf port "~a ~a" f p)))])
