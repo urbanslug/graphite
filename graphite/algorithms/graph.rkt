@@ -9,7 +9,8 @@
 (provide create-node
          update-node
          get-long-id
-         gen-directed-graph)
+         gen-directed-graph
+         display-graph)
 
 ;; sh256 hash as a hex hash
 (define (string->hash s)
@@ -91,7 +92,7 @@
     g**))
 
 ;; TODO: should we make this ASCII rep a graph?
-(define (print-graph g)
+(define (display-graph g)
   (void (map displayln (hash-values g))))
 
 ;; A list of node pairs and a graph and adds the nodes to the graph
