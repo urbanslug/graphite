@@ -8,50 +8,41 @@
 (require "../structures/graph.rkt")
 (require "../structures/variations.rkt")
 
+(define (cap ref prev-pos prev-nodes)
+  (map
+   (lambda (prev-node)
+     (cons (create-node (list->string (take ref prev-pos)) #:offset 0)
+           prev-node))
+   (car prev-nodes)))
 
-;; Force everything into strings for now at least
-;; May have some duplicates but it won't matter
-(define (gen-nodes ref vcf [prev-pos #f] [prev-nodes empty])
-  (cond
-    [(empty? vcf)
-     (map
-      (lambda (prev-node) (cons (create-node (list->string (take ref prev-pos)) #:offset 0) prev-node))
-      (car prev-nodes))]
+(define (handle-duplicate ref vcf [prev-pos #f] [prev-nodes empty])
+  (let* ([current (last vcf)]
+         ;; because the VCF is 1 indexed
+         [pos (- (variation-position current) 1)]
+         [seg-var (~a (variation-kmer current))]
 
-    [(and (number? prev-pos)
-          (= (- (variation-position (last vcf)) 1) prev-pos))
-     (let* ([current (last vcf)]
+         ;; How did this happen?
+         ;; this is bad we should be using nodes here
+         [orig-var (~a (first (car prev-nodes))) ]
+
+         [alt-node (create-node seg-var #:offset pos)]
+         [tail-node (cdr prev-nodes)])
+
+    (append empty
+            (list (cons alt-node tail-node))
+
+            ;; call with rest
+            (gen-nodes ref
+                       (drop-right vcf 1)
+                       pos
+                       (cons (append (car prev-nodes) (list alt-node)) tail-node)))))
+
+
+(define (handle-unique ref vcf [prev-pos #f] [prev-nodes empty])
+  (let* ([current (last vcf)]
              ;; because the VCF is 1 indexed
              [pos (- (variation-position current) 1)]
              [seg-var (~a (variation-kmer current))]
-
-             ;; How did this happen?
-             ;; this is bad we should be using nodes here
-             [orig-var (~a (first (car prev-nodes))) ]
-
-             [alt-node (create-node seg-var #:offset pos)]
-             [tail-node (cdr prev-nodes)])
-
-       (append empty
-               (list (cons alt-node tail-node))
-                ;; connect current string ref to previous nodes
-
-                ;; connect variation and original to "tail"
-                ;; (list (cons alt-node tail-node) (cons orig-node tail-node))
-
-                ;; call with rest
-                (gen-nodes ref
-                          (drop-right vcf 1)
-                          pos
-                          (cons (append (car prev-nodes) (list alt-node))
-                                tail-node))))]
-
-    [else
-     (let* ([current (last vcf)]
-             ;; because the VCF is 1 indexed
-             [pos (- (variation-position current) 1)]
-             [seg-var (~a (variation-kmer current))]
-
 
              ;; How did this happen?
              ;; this is bad we should be using nodes here
@@ -77,4 +68,21 @@
                 (gen-nodes ref
                           (drop-right vcf 1)
                           pos
-                          (cons (list orig-node alt-node) tail-node))))]))
+                          (cons (list orig-node alt-node) tail-node)))))
+
+;; Force everything into strings for now at least
+;; May have some duplicates but it won't matter
+(define (gen-nodes ref vcf [prev-pos #f] [prev-nodes empty])
+  (cond
+    [(empty? vcf) (cap ref prev-pos prev-nodes)]
+
+    [(and (number? prev-pos) (= (- (variation-position (last vcf)) 1) prev-pos))
+     (handle-duplicate ref vcf prev-pos prev-nodes)]
+
+    [else (handle-unique ref vcf prev-pos prev-nodes)]))
+
+
+;; Generate a graph from a reference and VCF
+(define (gen-vg reference variation-list)
+  (gen-directed-graph empty-graph
+                      (gen-nodes (string->list reference) variation-list)))
