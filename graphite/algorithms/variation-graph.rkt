@@ -15,19 +15,17 @@
            prev-node))
    (car prev-nodes)))
 
-(define (handle-duplicate ref vcf [prev-pos #f] [prev-nodes empty])
+(define (gen-alt-node vcf)
   (let* ([current (last vcf)]
          ;; because the VCF is 1 indexed
          [pos (- (variation-position current) 1)]
-         [seg-var (~a (variation-kmer current))]
+         [alt-kmer (~a (variation-kmer current))]
+         [alt-node (create-node alt-kmer #:offset pos)])
+    (values alt-node pos)))
 
-         ;; How did this happen?
-         ;; this is bad we should be using nodes here
-         [orig-var (~a (first (car prev-nodes))) ]
-
-         [alt-node (create-node seg-var #:offset pos)]
-         [tail-node (cdr prev-nodes)])
-
+(define (handle-duplicate ref vcf [prev-pos #f] [prev-nodes empty])
+  (let-values ([(alt-node pos) (gen-alt-node vcf)]
+               [(tail-node) (cdr prev-nodes)])
     (append empty
             (list (cons alt-node tail-node))
 
@@ -35,25 +33,18 @@
             (gen-nodes ref
                        (drop-right vcf 1)
                        pos
-                       (cons (append (car prev-nodes) (list alt-node)) tail-node)))))
+                       (cons (append (car prev-nodes) (list alt-node))
+                             tail-node)))))
 
 
 (define (handle-unique ref vcf [prev-pos #f] [prev-nodes empty])
-  (let* ([current (last vcf)]
-             ;; because the VCF is 1 indexed
-             [pos (- (variation-position current) 1)]
-             [seg-var (~a (variation-kmer current))]
+  (let*-values ([(alt-node pos) (gen-alt-node vcf)]
 
-             ;; How did this happen?
-             ;; this is bad we should be using nodes here
-             [seg-ref (list->string (slice ref (+ 1 pos) prev-pos))]
+                [(seg-ref) (list->string (slice ref (+ 1 pos) prev-pos))]
+                [(tail-node) (create-node seg-ref #:offset (+ 1 pos))]
 
-             [orig-var (~a (list-ref ref pos))]
-
-             [alt-node (create-node seg-var #:offset pos)]
-             [tail-node (create-node seg-ref #:offset (+ 1 pos))]
-             [orig-node (create-node orig-var #:offset pos)])
-
+                [(orig-var) (~a (list-ref ref pos))]
+                [(orig-node) (create-node orig-var #:offset pos)])
         (append empty
                 ;; connect current string ref to previous nodes
                 (map (lambda (prev-node) (cons tail-node prev-node))

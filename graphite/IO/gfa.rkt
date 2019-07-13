@@ -3,6 +3,7 @@
 (require "../algorithms/graph.rkt")
 (require "../algorithms/variation-graph.rkt")
 (require "./vcf.rkt")
+(require "./fasta.rkt")
 (require "../structures/graph.rkt")
 
 (provide write-gfa
