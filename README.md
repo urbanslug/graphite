@@ -1,10 +1,11 @@
 # graphite [![Build Status](https://travis-ci.org/stchang/graph.svg?branch=master)](https://travis-ci.org/stchang/graph)
 
-A tool that uses implements a variant graph and other necessary functionality for [BioD](https://github.com/biod/biod)
-
+A variation graph tool in racket.
 
 
 ## Dependencies
+Install dependencies
+
 ```
 $ raco pkg install --deps search-auto
 ```
@@ -17,24 +18,16 @@ $ raco pkg install --deps search-auto
 $ raco exe graphite/graphite.rkt
 ```
 
-### Run graphite from source
-
+#### Generate a gfa
+Without a compiled binary
 ```
-$ racket \
-graphite/graphite.rkt \
+racket graphite/graphite.rkt \
+-o output.gfa \
 data/RSV/refererence_and_vcf_file/9465113.fa \
 data/RSV/refererence_and_vcf_file/H_3801_22_04.freebayes.vcf
 ```
 
-By default graphite outputs graph in dot format to `data/output/graph.gv`.
-
-The binary would work the same way
-```
-$ graphite \
-data/RSV/refererence_and_vcf_file/9465113.fa \
-data/RSV/refererence_and_vcf_file/H_3801_22_04.freebayes.vcf
-```
-
+If compiled, you'd just call the graphite binary with the arguments needed.
 
 ## Help
 
@@ -48,14 +41,8 @@ $ racket graphite.rkt -h
 ```
 
 ## Visualization
+Load the gfa file into [bandage](https://rrwick.github.io/Bandage)
 
-Use graphviz to view the graph as an SVG.
-Graphite exports the graph in dot format into `data/output/graph.gv` but you can override this with the `-o` flag
-```
-$ cd data/output
-
-$ dot -Tsvg -o graph.svg graph.gv
-```
 
 ## Documentation
 

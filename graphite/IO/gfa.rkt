@@ -22,8 +22,8 @@
      gfa-header
      (string-join (hash-map g node->gfa-node)))))
 
-(define (write-gfa s)
-  (let* ([output-path "/Users/urbanslug/src/racket/graphite/data/output/gfa/test.gfa"]
+(define (write-gfa s output-fp)
+  (let* ([output-path output-fp]
          [port (open-output-file output-path #:exists 'replace)])
     (fprintf port s)
     (close-output-port port)))
