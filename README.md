@@ -42,7 +42,7 @@ $ racket graphite.rkt -h
 ```
 
 ## Visualization
-Load the gfa file into [bandage](https://rrwick.github.io/Bandage)
+Load the GFA file into [bandage](https://rrwick.github.io/Bandage)
 
 
 ## Documentation
