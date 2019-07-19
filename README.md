@@ -2,6 +2,7 @@
 
 A variation graph tool in racket.
 
+![rsv image](docs/images/rsv.png)
 
 ## Dependencies
 Install dependencies
