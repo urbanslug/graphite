@@ -1,13 +1,11 @@
 #lang racket
 
-(require "../algorithms/graph.rkt")
-(require "../algorithms/variation-graph.rkt")
-(require "./vcf.rkt")
-(require "./fasta.rkt")
 (require "../structures/graph.rkt")
 
 (provide write-gfa
-         vg->gfa-string)
+         vg->gfa-string
+         vg->gfa
+         )
 
 (define (node->gfa-node id n)
   (let* ([seq         (node-segment n)]
@@ -27,3 +25,6 @@
          [port (open-output-file output-path #:exists 'replace)])
     (fprintf port s)
     (close-output-port port)))
+
+(define (vg->gfa g fp)
+  (write-gfa (vg->gfa-string g) fp))

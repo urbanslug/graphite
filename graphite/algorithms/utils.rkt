@@ -10,6 +10,7 @@
          sublist-inc
          shorten-hash
          slice
+         in?
          )
 
 
@@ -50,8 +51,10 @@
 
 
 ;; Test membership
-(define (in? element l)
-  (if (member element l) #t #f))
+(define (in? element data)
+  (cond
+    [(set? data) (set-member? data element)]
+    [(list? data) (if (member element data) #t #f)]))
 
 (define (id)
   (lambda (x) x))

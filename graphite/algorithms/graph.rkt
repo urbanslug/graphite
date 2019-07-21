@@ -10,7 +10,10 @@
          update-node
          get-long-id
          gen-directed-graph
-         display-graph)
+         display-graph
+         get-node
+         add-edge
+         add-node)
 
 ;; sh256 hash as a hex hash
 (define (string->hash s)
@@ -47,7 +50,7 @@
   (hash-set graph (node-id node) node))
 
 ;; TODO: do this without having to recreate the node
-;; an edge is a UUID
+;; an edge is a hash
 ;; rename to add-edge-to-node?
 ;; O(1)
 (define (add-edge n edge)
@@ -58,6 +61,7 @@
 
 ;; return the node or false
 ;; takes an id or a node
+;; why is this taking node?
 (define (get-node g #:node [n #f] #:id [id #f])
   (if n
       (hash-ref g (node-id n) (lambda () n))
