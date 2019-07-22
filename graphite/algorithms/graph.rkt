@@ -13,7 +13,10 @@
          display-graph
          get-node
          add-edge
-         add-node)
+         add-node
+         add-adjacent-node
+         remove-adjacent-node
+         )
 
 ;; sh256 hash as a hex hash
 (define (string->hash s)

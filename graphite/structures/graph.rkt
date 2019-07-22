@@ -8,6 +8,7 @@
 (provide empty-graph
 
          node
+         node?
          node-offset
          node-segment
          node-edges

@@ -36,7 +36,6 @@
 (define (next-nodes g id)
   (node-edges (get-node g #:id id)))
 
-
 (define (exists-node-with-offset? g offset)
   (foldr (lambda (f s) (or f s))
          #f
@@ -47,6 +46,35 @@
                 #t
                 #f)))))
 
+(define (exists-node-with-greater-offset? g offset)
+  (foldr (lambda (f s) (or f s))
+         #f
+         (hash-map
+          g
+          (lambda (k n)
+            (if (> (node-offset n) offset)
+                #t
+                #f)))))
+
+(define (exists-node-with-lower-offset? g offset)
+  (foldr (lambda (f s) (or f s))
+         #f
+         (hash-map
+          g
+          (lambda (k n)
+            (if (< (node-offset n) offset)
+                #t
+                #f)))))
+
+(define (get-node-ids-with-offset g offset)
+  (flatten
+   (hash-map
+    g
+    (lambda (k n)
+      (if (=(node-offset n) offset)
+          k
+          empty)))))
+
 ;; TODO: move to graph
 (define (get-node-id-with-offset g offset)
   (first
@@ -54,7 +82,7 @@
     (hash-map
      g
      (lambda (k n)
-       (if (=(node-offset n) offset)
+       (if (= (node-offset n) offset)
            k
            empty))))))
 
@@ -77,14 +105,113 @@
      g
      (cons variation-node p*))))
 
+;; check is like >, =, < etc
+;; TODO: this name is wrong
+(define (get-nodes-to-split g offset check)
+  (sort (flatten
+               (hash-map g
+                         (lambda (k n)
+                           (if (check (node-offset n) offset)
+                               n
+                               empty))))
+              check
+              #:key node-offset))
+
+(define (get-offset v)
+  (- (variation-position v) 1))
+
+;; this is trying to split the previous instead of the current node
+(define (split-and-insert g n v)
+  (let* ([n*       (if (node? n) n (get-node g #:id n))]
+         [n*-id (node-id n*)]
+         [n*-offset (node-offset n*)]
+         [k (previous-nodes g n*-id)]
+         [segment  (node-segment n*)]
+         [offset   (get-offset v)]
+         [split-index (- offset n*-offset)]
+
+         [f (sublist (string->list segment) 0 split-index)]
+         [s (sublist (string->list segment) (+ 1 split-index))]
+         ;; not actually original but you get it.
+         [original (string-ref segment split-index)]
+
+         [f-node (create-node (list->string f) #:offset n*-offset)]
+         [s-node (create-node (list->string s) #:offset (+ 1 split-index) #:edges (node-edges n*))]
+         [alt-node (create-node (variation-kmer v) #:offset split-index)]
+         [original-node (create-node (string original) #:offset split-index)]
+
+         ;; remove old edge
+         [g* (foldr
+              (lambda (i accum) (remove-adjacent-node accum (get-node g #:id i) n*))
+              g
+              k)]
+
+         ;; add new edge
+         [g** (foldr
+               (lambda (i accum) (add-adjacent-node accum (get-node g #:id i) f-node))
+               g*
+               k)]
+
+         [x (list (cons f-node alt-node)
+                  (cons f-node original-node)
+                  (cons alt-node s-node)
+                  (cons original-node s-node))])
+    (gen-directed-graph g** x)))
+
+(define (split-and-insert* g n v)
+  (let* ([n*       (if (node? n) n (get-node g #:id n))]
+         [n*-id (node-id n*)]
+         [n*-offset (node-offset n*)]
+         [n*-segment  (node-segment n*)]
+
+         [offset (get-offset v)]
+         [split-index (- offset n*-offset)]
+
+         [f (sublist (string->list n*-segment) 0 split-index)]
+         [s (sublist-inc (string->list n*-segment) (+ 1 split-index) (- (string-length n*-segment) 1) )]
+         [original (string-ref n*-segment split-index)]
+
+         [f-node (create-node (list->string f) #:offset n*-offset)]
+         [s-node (create-node (list->string s) #:offset (+ 1 split-index) #:edges (node-edges n*))]
+         [alt-node (create-node (variation-kmer v) #:offset split-index)]
+         [original-node (create-node (string original) #:offset split-index)]
+
+         [g* (hash-remove g n*-id)]
+
+         [x (list (cons f-node alt-node)
+                  (cons f-node original-node)
+                  (cons alt-node s-node)
+                  (cons original-node s-node))])
+    (gen-directed-graph g* x)))
+
+(define (split-and-insert-next g variation)
+  (let* ([offset (- (variation-position variation) 1)]
+         [first-node (first (get-nodes-to-split g offset <))]
+
+         ;; these are the nodes we wish to split
+         [node-ids-with-offset (get-node-ids-with-offset g (node-offset first-node))])
+    ;; split and insert into node=ids-with-offset
+    (foldr (lambda (p* accum) (split-and-insert* g p* variation))
+           g
+           node-ids-with-offset)))
+
+(define (split-and-insert-previous g variation)
+  (let* ([offset (- (variation-position variation) 1)]
+         [last-node (last (get-nodes-to-split g offset <))]
+
+         ;; these are the nodes we wish to split
+         [node-ids-with-offset (get-node-ids-with-offset g (node-offset last-node))])
+    (foldr (lambda (p* accum) (split-and-insert g p* variation))
+           g
+           node-ids-with-offset)))
+
 (define (insert-variation g variation)
   (let ([offset (- (variation-position variation) 1)])
-    (if (exists-node-with-offset? g offset)
-        ;; I realize there's double computation here
-        (update-previous g variation)
-        1
-        )))
-
+    (cond
+      [(exists-node-with-offset? g offset) (update-previous g variation)]
+      [(exists-node-with-greater-offset? g offset)
+       (split-and-insert-next g variation)]
+      [else (split-and-insert-previous g variation)])))
 
 (define (update-vg g variations)
   (foldr
@@ -99,25 +226,17 @@
 (define v3 (variation 8 "CCA"))
 (define v4 (variation 8 "GAT"))
 
-(define variations (list v1 v2 v3 v4))
-
+(define variations (list v4))
 
 (define g (gen-vg reference variations))
+
+(define g* (update-vg g (list v1)))
+
 ; (display-graph g)
+; (vg->gfa g "/Users/urbanslug/src/racket/graphite/data/output/gfa/test.gfa")
 
+;(display-graph g*)
+;(vg->gfa g* "/Users/urbanslug/src/racket/graphite/data/output/gfa/test.gfa")
 
-(vg->gfa
- g
- "/Users/urbanslug/src/racket/graphite/data/output/gfa/test.gfa")
-
-;(previous-nodes g "3bab7138267925ef5f7f1e8ac0c2c21245f7bf6cbe46f2c8f12cc26214593ef0")
-
-;(exists-node-with-offset? g 6)
-
-(define v5 (variation 3 "UAG"))
-
-(define g* (update-vg g (list v5)))
-
-(vg->gfa
- g*
- "/Users/urbanslug/src/racket/graphite/data/output/gfa/test.gfa")
+(define g** (update-vg g* (list v3)))
+(vg->gfa g** "/Users/urbanslug/src/racket/graphite/data/output/gfa/test.gfa")
