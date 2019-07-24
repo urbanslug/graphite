@@ -13,5 +13,5 @@ install:
 
 clean:
 	find . -type d -name "compiled" -exec rm -rf {} +
-	rm *.dot *.svg *.gfa *.gv
+	rm *.dot *.svg *.gfa *.gv *.gra
 	rm -r bin/

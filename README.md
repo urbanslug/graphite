@@ -12,7 +12,6 @@ $ make
 ## Running
 ### Graph construction
 #### Generate a gfa
-Without a compiled binary
 ```
 $ ./bin/graphite construct \
  -o z.dot \
@@ -29,6 +28,21 @@ $ ./bin/graphite construct \
 ```
 
 ### Graph update
+Output a .gra file (a format specific to graphite/racket)
+```
+$ racket graphite/graphite.rkt construct \
+ -o rsv1.gra \
+ -f gra \
+data/RSV/refererence_and_vcf_file/9465113.fa data/RSV/refererence_and_vcf_file/H_3801_22_04.freebayes.vcf
+```
+
+Update the graph and output a dot format or whatever other format you'd like:
+```
+$ racket graphite/graphite.rkt update \
+ -o rsv2.dot \
+ -f dot \
+ rsv1.gra data/RSV/refererence_and_vcf_file/fake_H_3801_22_04.freebayes.vcf
+```
 
 ## Visualization
 ### GFA

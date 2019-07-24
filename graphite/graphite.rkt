@@ -4,28 +4,45 @@
          "./IO/fasta.rkt"
          "./IO/vcf.rkt"
          "./IO/gfa.rkt"
+         "./IO/graph.rkt"
          "./IO/dot.rkt"
          "./macros.rkt"
          "./structures/variations.rkt"
-         "./algorithms/variation-graph.rkt")
+         "./algorithms/variation-graph.rkt"
+         "./algorithms/progressive-update.rkt"
+         )
 
 (define output-file "./data/output/gfa/output.gfa")
 (define output-format "gfa")
 
-(define (get-output-file filepath)
+
+(define (set-output-file filepath)
   (set! output-file filepath))
 
-(define (get-output-format f)
+(define (set-output-format f)
   (set! output-format f))
+
+(define (gen-output g)
+  (match output-format
+    ["dot" (vg->dot g output-file)]
+    ["gfa" (vg->gfa g output-file)]
+    ["gra" (vg->gra g output-file)]))
+
 
 (define (gen-and-write-graph reference-file-path variation-file-path)
   (let* ([fasta-hash (read-fasta-file reference-file-path)]
-         [g (gen-vg (first (hash-values fasta-hash))
-                    (sort (read-vcf variation-file-path) < #:key variation-position))])
-    (match output-format
-          ["dot" (vg->dot g output-file)]
-          ["gfa" (vg->gfa g output-file)])))
+         [v (sort (read-vcf variation-file-path) < #:key variation-position)]
+         [g (gen-vg (first (hash-values fasta-hash)) v)])
+    (gen-output g)))
 
+(define (update-graph g v)
+  (let* ([x (gra->vg g)]
+        [v* (sort (read-vcf v) < #:key variation-position)]
+        [g (update-vg x v*)])
+    (gen-output g)))
+
+(define (viz-graph g-fp)
+  (gen-output (gra->vg g-fp)))
 
 (define (menu)
   (multi-command-line
@@ -33,10 +50,10 @@
    #:once-each
    [("-o" "--output") filepath
                       "Default is data/output/gfa/output.gfa"
-                      (get-output-file filepath)]
+                      (set-output-file filepath)]
    [("-f" "--format") output-format
-                      "Output format: gfa or dot. Default is gfa"
-                      (get-output-format output-format)]
+                      "Output format: gfa, gra or dot. Default is gfa"
+                      (set-output-format output-format)]
 
    #:usage-help "Options:\n\tconstruct\n\tupdate\n"
 
@@ -45,10 +62,12 @@
     #:args (reference-file vcf-file)
     (gen-and-write-graph reference-file vcf-file)]
    ["update"
-    #:args (graph vcf-file)
-    (gen-and-write-graph graph vcf-file)]))
+    #:args (graph-filepath vcf-file)
+    (update-graph graph-filepath vcf-file)]
+   ["view"
+    #:args (graph-filepath)
+    (viz-graph graph-filepath)]))
 
-(define (main)
-       (menu))
+(define main menu)
 
 (main)
