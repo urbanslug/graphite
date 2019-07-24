@@ -10,11 +10,15 @@
          "./algorithms/variation-graph.rkt")
 
 (define output-file "./data/output/gfa/output.gfa")
+(define output-format "gfa")
 
 (define (get-output-file filepath)
   (set! output-file filepath))
 
-(define (gen-and-write-graph reference-file-path variation-file-path [output-format "gfa"])
+(define (get-output-format f)
+  (set! output-format f))
+
+(define (gen-and-write-graph reference-file-path variation-file-path output-format)
   (let* ([fasta-hash (read-fasta-file reference-file-path)]
          [g (gen-vg (first (hash-values fasta-hash))
                     (sort (read-vcf variation-file-path) < #:key variation-position))])
@@ -30,22 +34,19 @@
    [("-o" "--output") filepath
                       "Default is data/output/gfa/output.gfa"
                       (get-output-file filepath)]
+   [("-f" "--format") output-format
+                      "Output format: gfa or dot. Default is gfa"
+                      (get-output-format output-format)]
 
-   #:usage-help "Options:\n\tconstruct\n\tview\n\tupdate\n"
+   #:usage-help "Options:\n\tconstruct\n\tupdate\n"
 
    #:subcommands
    ["construct"
     #:args (reference-file vcf-file)
     (gen-and-write-graph reference-file vcf-file)]
-   ["view"
-    #:args (reference-file vcf-file)
-    (gen-and-write-graph reference-file vcf-file)]
    ["update"
     #:args (graph vcf-file)
-    (gen-and-write-graph graph vcf-file)]
-   ["all"
-    #:args (reference-file vcf-file output-format)
-    (gen-and-write-graph reference-file vcf-file output-format)]))
+    (gen-and-write-graph graph vcf-file)]))
 
 (define (main)
        (menu))
