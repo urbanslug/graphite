@@ -231,7 +231,7 @@
            (cons alt-node s-node)
            (cons o-node s-node)))))
 
-(define (insert-at-the-start g v)
+(define (insert-elsewhere g v)
   ;; there could be multiple nodes at the end
   (let* ([x
           (last (sort (filter (lambda (n) (< (node-offset n) (get-offset v)))
@@ -242,23 +242,8 @@
 
     (foldr (lambda (n accum) (split-single-head-node accum n v))
            g
-           l
-           )))
+           l)))
 
-(define (insert-in-between g v)
-  (let ([i (+ 1 2 )])
-    (display "p")
-    g
-    ))
-
-(define (split-and-insert g v where)
-  (cond
-    ;; insert at the end
-    [(= 0 where) (insert-at-the-end g v)]
-    [(= 1 where) (insert-at-the-start g v)]
-    ;[(= 2 where) (insert-in-between g v)]
-    )
-  )
 
 (define (insert-at-start? g offset)
   (let ([lowest-offset-node (first (sort-nodes-by-offset g))])
@@ -271,19 +256,20 @@
      #f
      (set->list (node-edges lowest-offset-node)))))
 
-(define (insert-variation g variation)
-  (let ([offset (- (variation-position variation) 1)])
+(define (insert-variation g v)
+  (let ([offset (get-offset v)])
     (cond
       ;; add an extra alt where it exists
-      [(exists-node-with-offset? g offset) (update-previous g variation)]
+      [(exists-node-with-offset? g offset) (update-previous g v)]
 
       ;; insert a node at the end
       [(not (exists-node-with-greater-offset? g offset))
-       (split-and-insert g variation 0)]
+       (insert-at-the-end g v)
+       ]
 
       ;; insert a node at the beginning or
       ;; insert in a node that has next and previous
-      [else (split-and-insert g variation 1)]
+      [else (insert-elsewhere g v)]
 
       
       ;[else (split-and-insert g variation 2)]
