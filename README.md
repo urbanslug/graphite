@@ -4,51 +4,42 @@ A variation graph tool in racket.
 
 ![rsv image](docs/images/rsv.png)
 
-## Dependencies
-Install dependencies
-
+## Compile
 ```
-$ raco pkg install --deps search-auto
+$ make
 ```
 
 ## Running
-
-### Compile a binary
-
-```
-$ raco exe graphite/graphite.rkt
-```
-
 #### Generate a gfa
 Without a compiled binary
 ```
-racket graphite/graphite.rkt \
--o output.gfa \
-data/RSV/refererence_and_vcf_file/9465113.fa \
-data/RSV/refererence_and_vcf_file/H_3801_22_04.freebayes.vcf
+$ ./bin/graphite construct \
+ -o z.dot \
+ -f dot \
+  data/1mb1kgp/z.fa  data/1mb1kgp/z.vcf 
 ```
 
-If compiled, you'd just call the graphite binary with the arguments needed.
+#### Generate a dot
+```
+$ ./bin/graphite construct \
+ -o z.gfa \
+ -f gfa \
+  data/1mb1kgp/z.fa  data/1mb1kgp/z.vcf
+```
 
-## Help
-
-```
-$ graphite -h
-```
-
-or if not compiled
-```
-$ racket graphite.rkt -h
-```
 
 ## Visualization
+### GFA
 Load the GFA file into [bandage](https://rrwick.github.io/Bandage)
 
+### Graphviz
+Generate svg out of .dot
+```
+$ dot -Tsvg -o z.svg z.dot
+```
 
 ## Documentation
-
-To be found in the [docs directory](/docs).
-
+To be found at [Official graphite docs](https://urbanslug.github.io/graphite/).
 
 ## Test
 Run all tests

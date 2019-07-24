@@ -18,7 +18,7 @@
 (define (get-output-format f)
   (set! output-format f))
 
-(define (gen-and-write-graph reference-file-path variation-file-path output-format)
+(define (gen-and-write-graph reference-file-path variation-file-path)
   (let* ([fasta-hash (read-fasta-file reference-file-path)]
          [g (gen-vg (first (hash-values fasta-hash))
                     (sort (read-vcf variation-file-path) < #:key variation-position))])
