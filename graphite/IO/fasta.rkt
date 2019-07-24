@@ -26,5 +26,7 @@
 
 (define (read-fasta-file filepath)
   (let* ([port (open-input-file filepath)])
+    (printf "Reading reference file ~a\n" filepath)
     (next-line-it port)
+    (displayln "Successfully loaded the reference")
     fasta-hash))

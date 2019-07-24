@@ -23,8 +23,10 @@
 (define (write-gfa s output-fp)
   (let* ([output-path output-fp]
          [port (open-output-file output-path #:exists 'replace)])
+    (printf "Generating GFA file at output ~a\n" output-fp )
     (fprintf port s)
-    (close-output-port port)))
+    (close-output-port port)
+    (printf "GFA output file generated at ~a\n" output-fp )))
 
 (define (vg->gfa g fp)
   (write-gfa (vg->gfa-string g) fp))

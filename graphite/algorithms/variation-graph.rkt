@@ -43,8 +43,7 @@
                 [(seg-ref) (list->string (slice ref (+ 1 pos) prev-pos))]
                 [(tail-node) (create-node seg-ref #:offset (+ 1 pos))]
 
-                [(orig-var) (~a (list-ref ref pos))]
-                [(orig-node) (create-node orig-var #:offset pos)])
+                [(orig-node) (create-node (variation-original (last vcf)) #:offset pos)])
         (append empty
                 ;; connect current string ref to previous nodes
                 (map (lambda (prev-node) (cons tail-node prev-node))

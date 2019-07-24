@@ -4,6 +4,7 @@
          "./IO/fasta.rkt"
          "./IO/vcf.rkt"
          "./IO/gfa.rkt"
+         "./structures/variations.rkt"
          "./algorithms/variation-graph.rkt")
 
 (define output-file "./data/output/gfa/output.gfa")
@@ -12,12 +13,11 @@
   (set! output-file filepath))
 
 (define (gen-and-write-graph reference-file-path variation-file-path)
-  (let* ([variations-map (read-fasta-file reference-file-path)]
-        [key (hash-iterate-key variations-map (hash-iterate-first variations-map))])
+  (let* ([fasta-hash (read-fasta-file reference-file-path)])
     (write-gfa
      (vg->gfa-string
-      (gen-vg (hash-ref variations-map key)
-              (read-vcf variation-file-path)))
+      (gen-vg (first (hash-values fasta-hash))
+              (sort (read-vcf variation-file-path) < #:key variation-position)))
      output-file)))
 
 
@@ -33,6 +33,5 @@
 
 (define (main)
   (overall-menu))
-
 
 (main)

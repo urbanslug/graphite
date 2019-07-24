@@ -16,6 +16,7 @@
          add-node
          add-adjacent-node
          remove-adjacent-node
+         string->hash
          )
 
 ;; sh256 hash as a hex hash

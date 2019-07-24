@@ -11,17 +11,17 @@
 ;; a list
 (define variations empty)
 
+
+
 (define (save-line line)
-  (let* ([position-pair (regexp-match-positions #px"[ATCG]\\s" line)]
-         ;; sometimes this isn't a position pair but #f
-         [base-position  (cdr (car position-pair))]
-         [base (string-ref line base-position)]
-         [p (regexp-match-positions #px"\\s\\d*\\s" line)]
-         [f (+ (car (car p)) 1)]
-         [s (- (cdr (car p)) 1)]
-         [position  (string->number (substring line f s))])
-    (set! variations
-          (append variations (list (variation position base))))))
+  (let* ([stripped (string-split line)]
+         ;; split by every comma
+         [alt (string-split (list-ref stripped 4) ",")]
+         [original (list-ref stripped 3)]
+         [position  (string->number (list-ref stripped 1 ))]
+
+         [var-list (map (lambda (alt*) (variation position original alt*)) alt)])
+    (set! variations (append variations var-list))))
 
 (define (parse-vcf line)
   (when (regexp-match-positions #rx"AF=." line)
@@ -41,5 +41,7 @@
 
 (define (read-vcf filepath)
   (let* ([port (open-input-file filepath)])
+    (displayln "Parsing VCF. Considering AF=1")
     (next-line-it port)
+    (displayln "Successfully loaded variation data.")
     variations))
