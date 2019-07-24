@@ -30,6 +30,7 @@
   (let* ([s (if offset
                 (string-append segment "+" (number->string offset))
                 segment)]
+
          [id* (if id id (string->hash s)) ])
     (node segment id* offset adj)))
 

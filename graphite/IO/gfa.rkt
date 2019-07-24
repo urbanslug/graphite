@@ -4,8 +4,9 @@
 
 (provide write-gfa
          vg->gfa-string
-         vg->gfa
-         )
+         vg->gfa)
+
+
 
 (define (node->gfa-node id n)
   (let* ([seq         (node-segment n)]
