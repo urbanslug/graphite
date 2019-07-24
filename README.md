@@ -10,6 +10,7 @@ $ make
 ```
 
 ## Running
+### Graph construction
 #### Generate a gfa
 Without a compiled binary
 ```
@@ -27,6 +28,7 @@ $ ./bin/graphite construct \
   data/1mb1kgp/z.fa  data/1mb1kgp/z.vcf
 ```
 
+### Graph update
 
 ## Visualization
 ### GFA
@@ -39,7 +41,7 @@ $ dot -Tsvg -o z.svg z.dot
 ```
 
 ## Documentation
-To be found at [Official graphite docs](https://urbanslug.github.io/graphite/).
+To be found at [official graphite docs](https://urbanslug.github.io/graphite/).
 
 ## Test
 Run all tests
