@@ -1,6 +1,6 @@
 #lang info
 (define collection "graphite")
-(define deps '(("racket" "7.2") "graph"))
+(define deps '(("racket" "7.3")))
 (define version "0.0.0-alpha.1")
 
 ;; ignore whatever is in graphite and this file as well
