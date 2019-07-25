@@ -14,8 +14,7 @@
     (close-output-port port)))
 
 (define (gra->vg fp)
-  (let* ([input-path fp]
-         [port (open-input-file input-path)]
-         [g (deserialize (read port))])
+  (let* ([port       (open-input-file fp #:mode 'binary)]
+         [g          (deserialize (read port))])
     (close-input-port port)
     g))

@@ -1,6 +1,7 @@
 #lang racket
 
-(provide update-vg)
+(provide update-vg
+         insert-variation)
 
 (require "../structures/variations.rkt"
          "../structures/graph.rkt"
@@ -37,14 +38,16 @@
   (node-edges (get-node g #:id id)))
 
 (define (exists-node-with-offset? g offset)
-  (foldr (lambda (f s) (or f s))
-         #f
-         (hash-map
-          g
-          (lambda (k n)
-            (if (=(node-offset n) offset)
-                #t
-                #f)))))
+  (foldr
+   (lambda (f s) (or f s))
+   #f
+   (hash-map
+    g
+    (lambda (k n)
+      (if (=(node-offset n) offset)
+                      #t
+                      (begin
+                        #f))))))
 
 (define (exists-node-with-greater-offset? g offset)
   (foldr (lambda (f s) (or f s))
@@ -151,9 +154,9 @@
         [o (string-ref n*-segment insert-pos )]
 
         [f-node   (create-node (list->string f) #:offset n*-offset)]
-        [s-node   (create-node (list->string s) #:offset n*-offset)]
-        [o-node   (create-node (string o) #:offset n*-offset)]
-        [alt-node (create-node (variation-kmer v) #:offset n*-offset)]
+        [s-node   (create-node (list->string s) #:offset (+ 1 offset))]
+        [o-node   (create-node (string o) #:offset offset)]
+        [alt-node (create-node (variation-kmer v) #:offset offset)]
 
         ;; remove links to old node
         [g* (foldr
@@ -270,13 +273,12 @@
       ;; insert a node at the beginning or
       ;; insert in a node that has next and previous
       [else (insert-elsewhere g v)]
-
-      
       ;[else (split-and-insert g variation 2)]
       )))
 
 (define (update-vg g variations)
   (foldr
-   (lambda (v accum) (insert-variation accum v))
+   (lambda (v accum)
+     (insert-variation accum v))
    g
    variations))

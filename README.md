@@ -13,7 +13,7 @@ $ make
 ### Graph construction
 #### Generate a gfa
 ```
-$ ./bin/graphite construct \
+./bin/graphite construct \
  -o z.dot \
  -f dot \
   data/1mb1kgp/z.fa  data/1mb1kgp/z.vcf 
@@ -21,7 +21,7 @@ $ ./bin/graphite construct \
 
 #### Generate a dot
 ```
-$ ./bin/graphite construct \
+./bin/graphite construct \
  -o z.gfa \
  -f gfa \
   data/1mb1kgp/z.fa  data/1mb1kgp/z.vcf
@@ -30,7 +30,7 @@ $ ./bin/graphite construct \
 ### Graph update
 Output a .gra file (a format specific to graphite/racket)
 ```
-$ racket graphite/graphite.rkt construct \
+./bin/graphite construct \
  -o rsv1.gra \
  -f gra \
 data/RSV/refererence_and_vcf_file/9465113.fa data/RSV/refererence_and_vcf_file/H_3801_22_04.freebayes.vcf
@@ -38,13 +38,23 @@ data/RSV/refererence_and_vcf_file/9465113.fa data/RSV/refererence_and_vcf_file/H
 
 Update the graph and output a dot format or whatever other format you'd like:
 ```
-$ racket graphite/graphite.rkt update \
+./bin/graphite update \
  -o rsv2.dot \
  -f dot \
  rsv1.gra data/RSV/refererence_and_vcf_file/fake_H_3801_22_04.freebayes.vcf
 ```
 
 ## Visualization
+
+Generate a visualization out of a gra(serialized graph)
+```
+./bin/graphite view \
+ -o rsv1.dot \
+ -f dot \
+ rsv1.gra
+
+```
+
 ### GFA
 Load the GFA file into [bandage](https://rrwick.github.io/Bandage)
 

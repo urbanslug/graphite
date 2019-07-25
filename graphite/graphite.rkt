@@ -41,8 +41,9 @@
         [g (update-vg x v*)])
     (gen-output g)))
 
-(define (viz-graph g-fp)
-  (gen-output (gra->vg g-fp)))
+(define (viz-graph g)
+  (let ([x (gra->vg g)])
+    (gen-output x)))
 
 (define (menu)
   (multi-command-line
