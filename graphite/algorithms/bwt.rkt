@@ -7,18 +7,20 @@
          bwt)
 
 
-(define (sorted-bwm s)
-  (sort-bwm (gen-bwm s)))
 
+;; string -> list of strings
+(define sorted-bwm (compose sort-bwm gen-bwm))
 
-(define (extract-bwt sorted-bwm)
-  (list->string
-   (map (lambda (s*) (string-ref s* (- (string-length s*) 1))) sorted-bwm)))
+;; list of strings -> string
+(define (extract-bwt sorted-bwm*)
+  ((compose list->string map)
+   (lambda (s) (string-ref s (sub1 (string-length s))))
+   sorted-bwm*))
 
 ;; ignore spaces for now
 
-;; BWT brings like characters together in runs because it sorts by right context
+;; string -> string
+;; BWT brings like characters together in runs because it sorts by
+;; right context i.e. the text that comes right after the,
+(define bwt (compose extract-bwt sorted-bwm))
 
-(define/contract (bwt s)
-  (string? . -> . string?)
-  (extract-bwt (sorted-bwm s)))
