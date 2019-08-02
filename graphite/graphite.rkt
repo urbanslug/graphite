@@ -10,6 +10,7 @@
          "./structures/variations.rkt"
          "./algorithms/variation-graph.rkt"
          "./algorithms/progressive-update.rkt"
+         "./algorithms/poa.rkt"
          )
 
 (define output-file "./data/output/gfa/output.gfa")
@@ -45,6 +46,10 @@
   (let ([x (gra->vg g)])
     (gen-output x)))
 
+(define (align-reads reads-fp)
+  (let ([fasta-hash (read-fasta-file reads-fp)])
+    (align fasta-hash)))
+
 (define (menu)
   (multi-command-line
    #:program "Graphite: variation graph tool."
@@ -67,7 +72,10 @@
     (update-graph graph-filepath vcf-file)]
    ["view"
     #:args (graph-filepath)
-    (viz-graph graph-filepath)]))
+    (viz-graph graph-filepath)]
+   ["align"
+    #:args (reads-filepath)
+    (align-reads reads-filepath)]))
 
 (define main menu)
 

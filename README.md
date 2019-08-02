@@ -44,6 +44,13 @@ Update the graph and output a dot format or whatever other format you'd like:
  rsv1.gra data/RSV/refererence_and_vcf_file/fake_H_3801_22_04.freebayes.vcf
 ```
 
+### Align reads
+Generate a partial order alignment
+```
+./bin/graphite align \
+ tests/poa/example4.fa
+```
+
 ## Visualization
 
 Generate a visualization out of a gra(serialized graph)
