@@ -51,7 +51,7 @@ script:
   - raco exe graphite/graphite.rkt
 
 after_success:
-  - scribble --dest-name index.html --dest scribble-docs graphite/graphite.scrbl
+  - scribble --dest-name index.html --dest scribble-docs docs/graphite.scrbl
 
 deploy:
   provider: pages
