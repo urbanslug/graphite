@@ -21,7 +21,7 @@ env:
     - RACKET_VERSION=RELEASE
 
 matrix:
-    # You may want to test against certain versions of Racket, without
+  # You may want to test against certain versions of Racket, without
   # having them count against the overall success/failure. For example
   # here we include the development versions:
   allow_failures:
@@ -61,3 +61,4 @@ deploy:
   keep_history: true
   on:
     branch: master
+    condition: $RACKET_VERSION = 7.3
