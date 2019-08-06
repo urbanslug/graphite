@@ -103,5 +103,3 @@
                [(list start stop)
                 (search-rec (string->list kmer) tally-matrix sa-str bwt fc lc alphabet)])
     (sublist-inc sa start stop)))
-
-(time (search "aba" "abaaba"))
