@@ -31,7 +31,7 @@
 
 (check-equal? (#\z . in? . (string->list s2)) #f)
 
-(check-equal? (#\$ . in? . (string->list s2)) #t)
+(check-equal? (#\w . in? . (string->list s2)) #t)
 
 
 (check-equal? (extract-alphabet "aaasddsdsdqwqsdsderwfwr$")
