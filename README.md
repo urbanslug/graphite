@@ -1,4 +1,4 @@
-# graphite [![Build Status](https://travis-ci.org/stchang/graph.svg?branch=master)](https://travis-ci.org/stchang/graph)
+# graphite [![Build Status](https://travis-ci.org/urbanslug/graphite.svg?branch=master)](https://travis-ci.org/urbanslug/graphite)
 
 A variation graph tool in racket.
 
