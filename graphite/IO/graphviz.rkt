@@ -1,7 +1,5 @@
 #lang racket
 
-(require graph)
-
 (provide write-graphviz)
 
 
