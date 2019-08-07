@@ -2,6 +2,8 @@
 
 (require math/matrix)
 
+(provide display-matrix)
+
 (define (display-matrix m)
   (let-values ([(rows cols) (matrix-shape m)])
     (for ([col (build-list cols values)])
