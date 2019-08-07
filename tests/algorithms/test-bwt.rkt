@@ -1,8 +1,9 @@
 #lang racket
 
-(require rackunit)
-(require "../../graphite/algorithms/bwt.rkt")
-(require "../../graphite/algorithms/utils.rkt")
+(require rackunit
+         "../../graphite/algorithms/bwt.rkt"
+         "../../graphite/algorithms/utils.rkt")
+
 
 (define s "abaaba")
 

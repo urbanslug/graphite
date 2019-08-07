@@ -1,10 +1,11 @@
 #lang racket
 
-
-
 (require math/matrix
          math/array
          "../utils/matrix.rkt")
+
+
+(provide align)
 
 (define (insertion i j distance-matrix)
   (let ([j* (if (> j 0) (- j 1) j)])
@@ -41,8 +42,8 @@
 
 #|
 Calculate the length of a string once because it's expensive i.e. O(n)
-First string makes i/rows
-Second string makes j/columns
+First string makes j/columns
+Second string makes i/rows
 Spec: https://github.com/urbanslug/graphite/issues/1
 |#
 (define (distance-matrix first-string second-string)
@@ -60,5 +61,56 @@ Spec: https://github.com/urbanslug/graphite/issues/1
                     (cost i j first-string* second-string* distance-matrix))))
     distance-matrix))
 
-(display-matrix (distance-matrix "dist" "edi"))
+(define (output-alignment first-string second-string m)
+  ;; matrix shape has flipped rows and cols
+  (let*-values ([(rows cols) (matrix-shape m)]
+                [(rows*) (sub1 rows)]
+                [(cols*) (sub1 cols)])
+    (backtrack (string-append "^" first-string)
+               (string-append "^" second-string)
+               m
+               rows*
+               cols*
+               empty)))
+
+#|
+Backtrack given a distance matrix
+|#
+(define (backtrack first-string second-string m i j alignment)
+  (if (and (= 0 i) (= 0 j))
+      alignment
+      (let ([prev-vert-add1 (lambda () (add1 (matrix-ref m (- i 1) j)))]
+            [prev-lat-add1  (lambda () (add1 (matrix-ref m i (- j 1))))]
+            [prev-diag      (lambda () (matrix-ref m i (- j 1)))]
+            [current        (lambda () (matrix-ref m i j))])
+        (cond
+          [(and (> i 0) (= (current) (prev-vert-add1)))
+           (backtrack first-string
+                      second-string
+                      m
+                      (- i 1)
+                      j
+                      (cons (cons (string-ref first-string i) #\-)
+                            alignment))]
+          [(and (> j 0) (= (current) (prev-lat-add1)))
+           (backtrack first-string
+                      second-string
+                      m
+                      i
+                      (- j 1)
+                      (cons (cons #\- (string-ref second-string j))
+                            alignment))]
+          [else
+           (backtrack first-string
+                      second-string
+                      m
+                      (- i 1)
+                      (- j 1)
+                      (cons (cons (string-ref first-string i) (string-ref second-string j))
+                            alignment))]))))
+
+(define (align first-string second-string)
+  (output-alignment first-string
+                    second-string
+                    (distance-matrix first-string second-string)))
 
