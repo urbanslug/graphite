@@ -5,8 +5,17 @@ A variation graph tool in racket.
 ![rsv image](docs/images/rsv.png)
 
 ## Compile
+Install [Racket]
+
+Get the code
 ```
-$ make
+git clone https://github.com/urbanslug/graphite.git
+```
+
+Actually Compile
+```
+cd graphite/
+make
 ```
 
 ## Running
@@ -67,6 +76,8 @@ $ dot -Tsvg -o z.svg z.dot
 ## Documentation
 To be found at [official graphite docs](https://urbanslug.github.io/graphite/).
 
+[Google Summer of Code 2019—Final Submission]
+
 ## Test
 Run all tests
 ```
@@ -77,3 +88,6 @@ Run tests on a specific module
 ```
 $ raco test -m tests/run-all-tests.rkt
 ```
+
+[Google Summer of Code 2019—Final Submission]: https://blog.urbanslug.com/posts/2019-08-20-Google-Summer-of-Code-2019-Final-Submission.html
+[Racket]: https://www.racket-lang.org/
