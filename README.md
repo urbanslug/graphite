@@ -1,4 +1,4 @@
-# graphite [![Build Status](https://travis-ci.org/urbanslug/graphite.svg?branch=master)](https://travis-ci.org/urbanslug/graphite)
+# Graphite [![Build Status](https://travis-ci.org/urbanslug/graphite.svg?branch=master)](https://travis-ci.org/urbanslug/graphite)
 
 A variation graph tool in racket.
 
@@ -77,7 +77,7 @@ $ dot -Tsvg -o z.svg z.dot
 To be found at [official graphite docs].
 
 The Google Summer of Code 2019 submission link: [Google Summer of Code 2019—Final Submission].
-You could also find other related posts under the [graphite tag].
+You could also find other related posts under the [Graphite tag].
 
 ## Test
 Run all tests
@@ -96,6 +96,6 @@ $ raco test -m tests/run-all-tests.rkt
 
 [bandage]: https://rrwick.github.io/Bandage
 [official graphite docs]: https://urbanslug.github.io/graphite/
-[graphite tag]: https://blog.urbanslug.com/tags/Graphite.html
+[Graphite tag]: https://blog.urbanslug.com/tags/Graphite.html
 [Google Summer of Code 2019—Final Submission]: https://blog.urbanslug.com/posts/2019-08-20-Google-Summer-of-Code-2019-Final-Submission.html
 [Racket]: https://www.racket-lang.org/
