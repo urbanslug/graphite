@@ -76,8 +76,9 @@ $ dot -Tsvg -o z.svg z.dot
 ## Documentation
 To be found at [official graphite docs].
 
-The Google Summer of Code 2019 submission link: [Google Summer of Code 2019—Final Submission].
-You could also find other related posts under the [Graphite tag].
+You can find blog specific blog posts on my blog under the [Graphite tag];
+for the specific Google Summer of Code final submission: [Google Summer of Code 2019—Final Submission].
+
 
 ## Test
 Run all tests
