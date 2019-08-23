@@ -65,7 +65,7 @@ Generate a visualization out of a gra(serialized graph)
 ```
 
 ### GFA
-Load the GFA file into [bandage](https://rrwick.github.io/Bandage)
+Load the GFA file into [bandage].
 
 ### Graphviz
 Generate svg out of .dot
@@ -74,9 +74,10 @@ $ dot -Tsvg -o z.svg z.dot
 ```
 
 ## Documentation
-To be found at [official graphite docs](https://urbanslug.github.io/graphite/).
+To be found at [official graphite docs].
 
-The Google Summer of Code 2019 submission link: [Google Summer of Code 2019—Final Submission]
+The Google Summer of Code 2019 submission link: [Google Summer of Code 2019—Final Submission].
+You could also find other related posts under the [graphite tag].
 
 ## Test
 Run all tests
@@ -93,5 +94,8 @@ $ raco test -m tests/run-all-tests.rkt
 [GNU GENERAL PUBLIC LICENSE Version 3](LICENSE)
 
 
+[bandage]: https://rrwick.github.io/Bandage
+[official graphite docs]: https://urbanslug.github.io/graphite/
+[graphite tag]: https://blog.urbanslug.com/tags/Graphite.html
 [Google Summer of Code 2019—Final Submission]: https://blog.urbanslug.com/posts/2019-08-20-Google-Summer-of-Code-2019-Final-Submission.html
 [Racket]: https://www.racket-lang.org/
