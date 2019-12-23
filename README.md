@@ -1,3 +1,5 @@
+In order to scale to larger genomes I have decided to rewrite this in Rust. Further development will now be under https://github.com/urbanslug/flex-vg
+
 # Graphite [![Build Status](https://travis-ci.org/urbanslug/graphite.svg?branch=master)](https://travis-ci.org/urbanslug/graphite)
 
 A variation graph tool in racket.
